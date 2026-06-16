@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#000000</color>          <!-- 배경: 검정 -->
+    <color name="fg">#FFFFFF</color>          <!-- 본문: 흰색 -->
+    <color name="accent">#FFD400</color>      <!-- 입고 위치: 고대비 노랑 -->
+    <color name="muted">#B0B0B0</color>       <!-- 라벨: 회색 -->
+    <color name="button">#1565C0</color>      <!-- 버튼: 진한 파랑 -->
+    <color name="button_text">#FFFFFF</color>
+</resources>

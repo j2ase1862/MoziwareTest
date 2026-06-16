@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">입고위치 조회</string>
+    <string name="label_barcode">바코드</string>
+    <string name="btn_scan">스캔</string>
+    <string name="btn_inbound">입고</string>
+    <string name="btn_inbound_item">입고제품</string>
+</resources>

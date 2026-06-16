@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  PoC/개발용: 사설 서버를 HTTP(cleartext)로 호출하는 것을 허용한다.
+  (예: 에뮬레이터 10.0.2.2, 사내 IP)
+
+  운영 배포 시(TODO #1):
+   · BASE_URL 을 HTTPS 로 바꾸고
+   · 아래 base-config 의 cleartextTrafficPermitted 를 false 로 좁히거나
+   · 사설 인증서라면 <trust-anchors> 로 사내 CA 를 신뢰하도록 구성한다.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

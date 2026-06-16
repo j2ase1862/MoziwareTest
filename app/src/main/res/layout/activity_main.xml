@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  854×480 단안 디스플레이용 가로 고대비 다크 레이아웃.
+  · 검정 배경 + 흰색/노랑 텍스트로 대비 최대화
+  · 입고 위치(locationText)를 화면의 주인공으로 가장 크게
+  · 하단 3개 버튼의 text 는 곧 WearHF 음성 명령(스캔/입고/입고제품)
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:padding="12dp">
+
+    <!-- 상단: 바코드 -->
+    <TextView
+        android:id="@+id/barcodeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_barcode"
+        android:textColor="@color/muted"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/barcodeText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="—"
+        android:textColor="@color/fg"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@id/barcodeLabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/barcodeLabel" />
+
+    <!-- 중앙: 입고 위치(주인공) -->
+    <TextView
+        android:id="@+id/locationText"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMinTextSize="32sp"
+        android:autoSizeMaxTextSize="96sp"
+        android:textColor="@color/accent"
+        android:textStyle="bold"
+        android:text=""
+        app:layout_constraintBottom_toTopOf="@id/statusText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barcodeLabel" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/locationText"
+        app:layout_constraintEnd_toEndOf="@id/locationText"
+        app:layout_constraintStart_toStartOf="@id/locationText"
+        app:layout_constraintTop_toTopOf="@id/locationText" />
+
+    <!-- 안내/상태 메시지 -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:minHeight="40dp"
+        android:text=""
+        android:textColor="@color/fg"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/buttonRow"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 하단 버튼 행: text = 음성 명령 -->
+    <LinearLayout
+        android:id="@+id/buttonRow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:baselineAligned="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/scanButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:text="@string/btn_scan"
+            android:textSize="20sp"
+            app:cornerRadius="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/inboundButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:text="@string/btn_inbound"
+            android:textSize="20sp"
+            app:cornerRadius="8dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/inboundItemButton"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
+            android:text="@string/btn_inbound_item"
+            android:textSize="20sp"
+            app:cornerRadius="8dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,26 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# 릴리스 서명 비밀 — 커밋 금지
+/keystore.properties
+/release.jks
+*.jks
+*.keystore
+
+# 진단/스크린샷 산출물
+/NetProbe.java
+/NetProbe.class
+/screenshot-*.png

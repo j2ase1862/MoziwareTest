@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!-- BODA.VMS.Web 이 LTS(net8.0)면 그대로, 다른 버전이면 맞춰 변경. -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>BodaGlass.StubApi</RootNamespace>
+    <AssemblyName>BodaGlass.StubApi</AssemblyName>
+  </PropertyGroup>
+
+  <!--
+    의도적으로 외부 NuGet 패키지 0개(프레임워크 참조만).
+    → 오프라인에서도 `dotnet run` 가능. 실제 BODA.VMS.Web 에서는 EF Core 로 교체.
+  -->
+
+</Project>
