@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  출고 목록 · 854×480 다크. 상단바([취소]·제목·[새로고침]) / 주문 카드 목록(스크롤) /
-  상태 배너 / 하단 [주문 스캔]. 모든 버튼 text = WearHF 음성 명령, 목록 항목은 번호/탭 선택.
+  출고 목록 · 854×480 다크. 상단([취소]·제목·[새로고침]) / 주문 목록(커서 강조) /
+  상태 배너 / 하단([이전][열기][다음][주문 스캔]).
+  선택: 커서(이전/다음→열기) · WearHF "항목 N 열기" · 탭 — 셋 다 지원.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -54,6 +55,7 @@
         app:layout_constraintTop_toBottomOf="@id/cancelButton" />
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
@@ -85,18 +87,54 @@
         android:text=""
         android:textColor="@color/fg"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@id/scanOrderButton"
+        app:layout_constraintBottom_toTopOf="@id/buttonRow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/scanOrderButton"
-        style="@style/Widget.Glass.Button.Primary"
+    <LinearLayout
+        android:id="@+id/buttonRow"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:text="@string/btn_scan_order"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/prevButton"
+            style="@style/Widget.Glass.Button.Tonal"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="@string/btn_prev" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/openButton"
+            style="@style/Widget.Glass.Button.Primary"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.2"
+            android:text="@string/btn_open" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/nextButton"
+            style="@style/Widget.Glass.Button.Tonal"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:text="@string/btn_next" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/scanOrderButton"
+            style="@style/Widget.Glass.Button.Tonal"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1.4"
+            android:text="@string/btn_scan_order" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
