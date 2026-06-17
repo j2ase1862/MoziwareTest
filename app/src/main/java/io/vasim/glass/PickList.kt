@@ -27,3 +27,21 @@ data class PickLine(
     val pickedQty: Int = 0,
     val locationText: String = "",
 )
+
+/** 스캔 검증 피킹 확정 요청 (2차). */
+@Serializable
+data class PickConfirmRequest(
+    val orderNo: String,
+    val barcode: String,
+    val qty: Int = 1,
+)
+
+/** 피킹 확정 결과 (2차) — PickConfirmResult DTO와 1:1. */
+@Serializable
+data class PickConfirmResult(
+    val matched: Boolean = false,
+    val alreadyComplete: Boolean = false,
+    val allPicked: Boolean = false,
+    val message: String = "",
+    val pickList: PickList = PickList(),
+)

@@ -12,4 +12,6 @@
     <string name="btn_prev">이전</string>
     <string name="btn_next">다음</string>
     <string name="btn_close">닫기</string>
+    <string name="btn_pick_scan">스캔</string>
+    <string name="btn_ship">출하 확정</string>
 </resources>

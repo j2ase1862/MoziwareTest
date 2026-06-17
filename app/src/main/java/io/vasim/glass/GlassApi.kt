@@ -4,8 +4,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 
@@ -106,4 +108,42 @@ class GlassApi(
                 PickResult.Error("응답 처리 오류: ${e.message ?: e.javaClass.simpleName}")
             }
         }
+
+    /**
+     * POST /api/glass/pick-confirm — 스캔 검증 피킹 확정(2차).
+     * 실패(네트워크/404 등) 시 null.
+     */
+    suspend fun confirmPick(orderNo: String, barcode: String, qty: Int = 1): PickConfirmResult? =
+        postJson("/api/glass/pick-confirm", PickConfirmRequest(orderNo, barcode, qty)) { body ->
+            json.decodeFromString<PickConfirmResult>(body)
+        }
+
+    /** POST /api/glass/ship-confirm — 출하 확정(2차). 갱신된 피킹 목록 반환, 실패 시 null. */
+    suspend fun confirmShip(orderNo: String): PickList? =
+        postJson("/api/glass/ship-confirm", PickConfirmRequest(orderNo, "", 0)) { body ->
+            json.decodeFromString<PickList>(body)
+        }
+
+    /** JSON 바디 POST 후 성공 응답을 [decode]. 실패하면 null. */
+    private suspend fun <T> postJson(
+        path: String,
+        body: PickConfirmRequest,
+        decode: (String) -> T,
+    ): T? = withContext(Dispatchers.IO) {
+        try {
+            val requestBody = json.encodeToString(PickConfirmRequest.serializer(), body)
+                .toRequestBody(jsonMedia)
+            val requestBuilder = Request.Builder().url("$baseUrl$path").post(requestBody)
+            if (apiKey.isNotBlank()) {
+                requestBuilder.header("X-API-Key", apiKey)
+            }
+            client.newCall(requestBuilder.build()).execute().use { response ->
+                if (response.isSuccessful) decode(response.body?.string().orEmpty()) else null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private val jsonMedia = "application/json; charset=utf-8".toMediaType()
 }

@@ -20,7 +20,8 @@ local.properties
 *.jks
 *.keystore
 
-# 진단/스크린샷 산출물
+# 진단/스크린샷/시연 산출물
 /NetProbe.java
 /NetProbe.class
 /screenshot-*.png
+/qr-*.png

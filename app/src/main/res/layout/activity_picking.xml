@@ -126,21 +126,21 @@
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/nextButton"
+            android:id="@+id/actionButton"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_marginEnd="6dp"
             android:layout_weight="1"
-            android:text="@string/btn_next"
+            android:text="@string/btn_pick_scan"
             android:textSize="20sp"
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/closeButton"
+            android:id="@+id/nextButton"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_weight="1"
-            android:text="@string/btn_close"
+            android:text="@string/btn_next"
             android:textSize="20sp"
             app:cornerRadius="8dp" />
     </LinearLayout>
