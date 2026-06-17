@@ -90,42 +90,66 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- 입고 위치 히어로 카드 -->
+    <!-- 입고 위치 히어로 카드 (미니맵 + 코드/힌트) -->
     <LinearLayout
         android:id="@+id/heroCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/bg_card"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="12dp"
         app:layout_constraintBottom_toTopOf="@id/statusText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barcodeChip">
 
-        <TextView
-            android:id="@+id/locationLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/label_location"
-            android:textColor="@color/muted"
-            android:textSize="14sp"
-            android:letterSpacing="0.08" />
+        <io.vasim.glass.WarehouseMapView
+            android:id="@+id/warehouseMap"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/locationText"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:autoSizeMaxTextSize="80sp"
-            android:autoSizeMinTextSize="28sp"
-            android:autoSizeTextType="uniform"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1.25"
             android:gravity="center"
-            android:text=""
-            android:textColor="@color/accent"
-            android:textStyle="bold" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/locationLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:letterSpacing="0.08"
+                android:text="@string/label_location"
+                android:textColor="@color/muted"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/locationText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="48sp"
+                android:autoSizeMinTextSize="20sp"
+                android:autoSizeTextType="uniform"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/hintText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/muted"
+                android:textSize="15sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <ProgressBar

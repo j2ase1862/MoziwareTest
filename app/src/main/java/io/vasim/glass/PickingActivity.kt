@@ -192,10 +192,13 @@ class PickingActivity : AppCompatActivity() {
         if (index < total) {
             val line = list.lines[index]
             binding.progressText.text = "${index + 1} / $total"
+            val p = LocationFormat.parse(line.locationText)
+            binding.warehouseMap.setLocation(p)
             binding.locationText.text = line.locationText.ifBlank { "위치 미등록" }
             binding.itemText.text = listOf(line.itemCode, line.itemName)
                 .filter { it.isNotBlank() }.joinToString("  ")
             binding.qtyText.text = "수량 ${line.pickedQty} / ${line.qty}"
+            binding.hintText.text = if (p.ok) LocationFormat.hint(p) else ""
 
             setAction(getString(R.string.btn_pick_scan), Status.NEUTRAL, enabled = true) { scanProduct() }
             binding.nextButton.text = getString(R.string.btn_next)
@@ -203,6 +206,8 @@ class PickingActivity : AppCompatActivity() {
             showStatus("이 위치에서 제품을 ‘스캔’ 하세요", Status.NEUTRAL)
         } else {
             binding.progressText.text = if (shipped) "출하완료" else "완료"
+            binding.warehouseMap.setLocation(null)   // 목적지(도크)는 랙 위치가 아님
+            binding.hintText.text = "출고 목적지"
             binding.locationText.text = list.destination?.ifBlank { "목적지 미지정" } ?: "목적지 미지정"
             binding.itemText.text = "출고 목적지"
             binding.qtyText.text = when {

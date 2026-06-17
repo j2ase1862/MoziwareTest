@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
         lastBarcode = code
         binding.barcodeText.text = code
         binding.locationText.text = ""
+        binding.hintText.text = ""
+        binding.warehouseMap.setLocation(null)
         showStatus("‘입고’ 또는 ‘입고제품’ 이라고 말하세요", Status.NEUTRAL)
     }
 
@@ -86,6 +88,8 @@ class MainActivity : AppCompatActivity() {
 
         setLoading(true)
         binding.locationText.text = ""
+        binding.hintText.text = ""
+        binding.warehouseMap.setLocation(null)
         showStatus("입고 위치 조회 중… ($mode)", Status.NEUTRAL)
 
         lifecycleScope.launch {
@@ -99,9 +103,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /** 결과 표시 — 입고 위치를 대형 강조, 상태는 성공(초록). */
+    /** 결과 표시 — 미니맵 핀 + 코드 + 방향 힌트, 상태는 성공(초록). */
     private fun showResult(location: InboundLocation) {
-        binding.locationText.text = location.locationText.ifBlank { "위치 정보 없음" }
+        val text = location.locationText
+        val p = LocationFormat.parse(text)
+        binding.warehouseMap.setLocation(p)
+        binding.locationText.text = text.ifBlank { "위치 정보 없음" }
+        binding.hintText.text = if (p.ok) LocationFormat.hint(p) else ""
         val name = location.itemName?.takeIf { it.isNotBlank() }
         showStatus(name?.let { "✓ $it" } ?: "✓ 조회 완료", Status.SUCCESS)
     }
@@ -110,6 +118,8 @@ class MainActivity : AppCompatActivity() {
         lastBarcode = null
         binding.barcodeText.text = "—"
         binding.locationText.text = ""
+        binding.hintText.text = ""
+        binding.warehouseMap.setLocation(null)
         showStatus("‘바코드 스캔’ 이라고 말하거나 버튼을 누르세요", Status.NEUTRAL)
     }
 

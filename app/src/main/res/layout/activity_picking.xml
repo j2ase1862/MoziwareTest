@@ -76,53 +76,79 @@
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/bg_card"
-        android:gravity="center"
-        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="12dp"
         app:layout_constraintBottom_toTopOf="@id/statusText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider">
 
-        <TextView
-            android:id="@+id/locationText"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:autoSizeMaxTextSize="76sp"
-            android:autoSizeMinTextSize="26sp"
-            android:autoSizeTextType="uniform"
-            android:gravity="center"
-            android:text=""
-            android:textColor="@color/accent"
-            android:textStyle="bold" />
+        <io.vasim.glass.WarehouseMapView
+            android:id="@+id/warehouseMap"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/itemText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="14dp"
+            android:layout_weight="1.35"
             android:gravity="center"
-            android:maxLines="1"
-            android:text=""
-            android:textColor="@color/fg"
-            android:textSize="20sp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/qtyText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/bg_chip"
-            android:gravity="center"
-            android:paddingStart="14dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="14dp"
-            android:paddingBottom="6dp"
-            android:text=""
-            android:textColor="@color/fg"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/locationText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:autoSizeMaxTextSize="48sp"
+                android:autoSizeMinTextSize="22sp"
+                android:autoSizeTextType="uniform"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/accent"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/itemText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/fg"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/qtyText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_chip"
+                android:gravity="center"
+                android:paddingStart="14dp"
+                android:paddingTop="5dp"
+                android:paddingEnd="14dp"
+                android:paddingBottom="5dp"
+                android:text=""
+                android:textColor="@color/fg"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/hintText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/muted"
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <ProgressBar
