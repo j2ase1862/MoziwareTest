@@ -18,6 +18,9 @@ import kotlinx.coroutines.launch
  * 주문 바코드 스캔 → 피킹 목록 → 라인별 제품 바코드 스캔 검증 + 수량 채움 →
  * 전 라인 완료 후 출하 확정 → 출고 목적지.
  *
+ * 상태 판별: "주문이 로드됐는가"([pickList] != null)로 스캔을 주문/제품으로 구분한다.
+ * 액티비티가 재생성돼도 [orderNo]를 저장해 자동 재로딩하므로 흐름이 꼬이지 않는다.
+ *
  * 네비게이션: 상단 [취소] 상시(앱 홈 복귀), 하단 [이전]·[스캔/출하확정]·[다음/닫기].
  * 모든 버튼 text = WearHF 음성 명령.
  */
@@ -25,6 +28,7 @@ class PickingActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_ORDER_NO = "io.vasim.glass.ORDER_NO"
+        private const val STATE_ORDER_NO = "state.orderNo"
     }
 
     private enum class Status { NEUTRAL, SUCCESS, ERROR }
@@ -35,7 +39,6 @@ class PickingActivity : AppCompatActivity() {
     private var pickList: PickList? = null
     private var index = 0                 // 0..lines.size — lines.size 이면 목적지/출하 화면
     private var orderNo: String = ""
-    private var awaitingOrder = true
     private var shipped = false
 
     private val scanLauncher = registerForActivityResult(
@@ -44,12 +47,12 @@ class PickingActivity : AppCompatActivity() {
         val code = if (result.resultCode == Activity.RESULT_OK)
             result.data?.getStringExtra(BarcodeScanner.EXTRA_RESULT) else null
 
-        if (awaitingOrder) {
-            if (!code.isNullOrBlank()) loadOrder(code)
-            else showStatus("주문 바코드를 읽지 못했습니다 · ‘취소’로 종료", Status.ERROR)
-        } else {
-            if (!code.isNullOrBlank()) onProductScanned(code)
-            else showStatus("바코드를 읽지 못했습니다 · ‘스캔’ 다시", Status.ERROR)
+        when {
+            code.isNullOrBlank() ->
+                showStatus("바코드를 읽지 못했습니다 · 다시 시도", Status.ERROR)
+            // 주문이 아직 안 실렸으면 = 주문 스캔, 실렸으면 = 제품 스캔
+            pickList == null -> loadOrder(code)
+            else -> onProductScanned(code)
         }
     }
 
@@ -60,22 +63,28 @@ class PickingActivity : AppCompatActivity() {
 
         binding.cancelButton.setOnClickListener { finish() }   // 음성 "취소" → 앱 홈
         binding.prevButton.setOnClickListener { step(-1) }
-        // actionButton / nextButton 핸들러·색은 render()에서 상태별로 지정
 
+        // 재생성 복원: extra > 저장된 주문번호 > 신규 주문 스캔
         val preset = intent.getStringExtra(EXTRA_ORDER_NO)
-        if (!preset.isNullOrBlank()) loadOrder(preset) else startOrderScan()
+        val restored = savedInstanceState?.getString(STATE_ORDER_NO)
+        when {
+            !preset.isNullOrBlank() -> loadOrder(preset)
+            !restored.isNullOrBlank() -> loadOrder(restored)
+            else -> startOrderScan()
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (orderNo.isNotBlank()) outState.putString(STATE_ORDER_NO, orderNo)
     }
 
     private fun startOrderScan() {
-        awaitingOrder = true
         showStatus("출고 주문 바코드를 스캔하세요", Status.NEUTRAL)
         launchScanner()
     }
 
-    private fun scanProduct() {
-        awaitingOrder = false
-        launchScanner()
-    }
+    private fun scanProduct() = launchScanner()
 
     private fun launchScanner() {
         try {
@@ -86,7 +95,6 @@ class PickingActivity : AppCompatActivity() {
     }
 
     private fun loadOrder(scanned: String) {
-        orderNo = scanned
         setLoading(true)
         binding.orderText.text = scanned
         binding.locationText.text = ""
@@ -96,9 +104,12 @@ class PickingActivity : AppCompatActivity() {
             setLoading(false)
             when (result) {
                 is PickResult.Success -> {
+                    orderNo = scanned
                     pickList = result.pickList
-                    index = 0
-                    shipped = false
+                    // 재개: 첫 미완료 라인으로 이동(전부 완료면 목적지)
+                    val firstIncomplete = result.pickList.lines.indexOfFirst { it.pickedQty < it.qty }
+                    index = if (firstIncomplete < 0) result.pickList.lines.size else firstIncomplete
+                    shipped = result.pickList.status == "Done"
                     render()
                 }
                 is PickResult.NotFound -> showStatus(result.message + " · ‘취소’로 종료", Status.ERROR)
@@ -109,7 +120,7 @@ class PickingActivity : AppCompatActivity() {
 
     private fun onProductScanned(barcode: String) {
         val order = orderNo
-        if (order.isBlank()) return
+        if (order.isBlank() || pickList == null) return
         setLoading(true)
         showStatus("확정 중…", Status.NEUTRAL)
         lifecycleScope.launch {
@@ -179,7 +190,6 @@ class PickingActivity : AppCompatActivity() {
         }
 
         if (index < total) {
-            // === 피킹 라인 (스캔 검증) ===
             val line = list.lines[index]
             binding.progressText.text = "${index + 1} / $total"
             binding.locationText.text = line.locationText.ifBlank { "위치 미등록" }
@@ -192,7 +202,6 @@ class PickingActivity : AppCompatActivity() {
             binding.nextButton.setOnClickListener { step(+1) }
             showStatus("이 위치에서 제품을 ‘스캔’ 하세요", Status.NEUTRAL)
         } else {
-            // === 출고 목적지 / 출하 확정 ===
             binding.progressText.text = if (shipped) "출하완료" else "완료"
             binding.locationText.text = list.destination?.ifBlank { "목적지 미지정" } ?: "목적지 미지정"
             binding.itemText.text = "출고 목적지"
@@ -218,7 +227,6 @@ class PickingActivity : AppCompatActivity() {
         binding.prevButton.isEnabled = index > 0
     }
 
-    /** 가운데 동작 버튼의 텍스트·색·동작을 상태별로 지정. */
     private fun setAction(text: String, kind: Status, enabled: Boolean, onClick: () -> Unit) {
         binding.actionButton.text = text
         binding.actionButton.isEnabled = enabled
