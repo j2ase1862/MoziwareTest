@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  854×480 단안 디스플레이용 가로 고대비 다크 레이아웃.
-  · 검정 배경 + 흰색/노랑 텍스트로 대비 최대화
-  · 입고 위치(locationText)를 화면의 주인공으로 가장 크게
-  · 하단 3개 버튼의 text 는 곧 WearHF 음성 명령(스캔/입고/입고제품)
+  854×480 단안 글라스 · 다크 고대비.
+  상단바(제목·처음으로) / 바코드 칩 / 입고 위치 히어로 카드 / 상태 배너 / 동작 버튼.
+  버튼 텍스트 = WearHF 음성 명령.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,122 +12,188 @@
     android:background="@color/bg"
     android:padding="12dp">
 
-    <!-- 상단: 바코드 -->
+    <!-- 상단바 -->
     <TextView
-        android:id="@+id/barcodeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/label_barcode"
-        android:textColor="@color/muted"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/barcodeText"
+        android:id="@+id/titleText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="—"
+        android:text="@string/title_main"
         android:textColor="@color/fg"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@id/barcodeLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barcodeLabel" />
+        app:layout_constraintBottom_toBottomOf="@id/homeButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/homeButton"
+        app:layout_constraintTop_toTopOf="@id/homeButton" />
 
-    <!-- 중앙: 입고 위치(주인공) -->
-    <TextView
-        android:id="@+id/locationText"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/homeButton"
+        style="@style/Widget.Glass.Button.Ghost"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/btn_home"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/homeButton" />
+
+    <!-- 바코드 칩 -->
+    <LinearLayout
+        android:id="@+id/barcodeChip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_chip"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="14dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_barcode"
+            android:textColor="@color/muted"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/barcodeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:fontFamily="monospace"
+            android:text="—"
+            android:textColor="@color/fg"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- 입고 위치 히어로 카드 -->
+    <LinearLayout
+        android:id="@+id/heroCard"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_card"
         android:gravity="center"
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="32sp"
-        android:autoSizeMaxTextSize="96sp"
-        android:textColor="@color/accent"
-        android:textStyle="bold"
-        android:text=""
+        android:orientation="vertical"
+        android:padding="12dp"
         app:layout_constraintBottom_toTopOf="@id/statusText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barcodeLabel" />
+        app:layout_constraintTop_toBottomOf="@id/barcodeChip">
+
+        <TextView
+            android:id="@+id/locationLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_location"
+            android:textColor="@color/muted"
+            android:textSize="14sp"
+            android:letterSpacing="0.08" />
+
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="80sp"
+            android:autoSizeMinTextSize="28sp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/accent"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progress"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:indeterminateTint="@color/primary"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/locationText"
-        app:layout_constraintEnd_toEndOf="@id/locationText"
-        app:layout_constraintStart_toStartOf="@id/locationText"
-        app:layout_constraintTop_toTopOf="@id/locationText" />
+        app:layout_constraintBottom_toBottomOf="@id/heroCard"
+        app:layout_constraintEnd_toEndOf="@id/heroCard"
+        app:layout_constraintStart_toStartOf="@id/heroCard"
+        app:layout_constraintTop_toTopOf="@id/heroCard" />
 
-    <!-- 안내/상태 메시지 -->
+    <!-- 상태 배너 -->
     <TextView
         android:id="@+id/statusText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_pill"
+        android:backgroundTint="@color/surface_variant"
         android:gravity="center"
-        android:minHeight="40dp"
+        android:paddingStart="16dp"
+        android:paddingTop="9dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="9dp"
         android:text=""
         android:textColor="@color/fg"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/buttonRow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 하단 버튼 행: text = 음성 명령 -->
+    <!-- 동작 버튼 (text = 음성 명령) -->
     <LinearLayout
         android:id="@+id/buttonRow"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:baselineAligned="false"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/scanButton"
+            style="@style/Widget.Glass.Button.Primary"
             android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="6dp"
-            android:text="@string/btn_scan"
-            android:textSize="18sp"
-            app:cornerRadius="8dp" />
+            android:layout_height="62dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.3"
+            android:text="@string/btn_scan" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/inboundButton"
+            style="@style/Widget.Glass.Button.Tonal"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="62dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:layout_marginEnd="6dp"
-            android:text="@string/btn_inbound"
-            android:textSize="18sp"
-            app:cornerRadius="8dp" />
+            android:text="@string/btn_inbound" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/inboundItemButton"
+            style="@style/Widget.Glass.Button.Tonal"
             android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:layout_marginEnd="6dp"
-            android:text="@string/btn_inbound_item"
-            android:textSize="18sp"
-            app:cornerRadius="8dp" />
+            android:layout_height="62dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.2"
+            android:text="@string/btn_inbound_item" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/outboundButton"
+            style="@style/Widget.Glass.Button.Tonal"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="62dp"
             android:layout_weight="1"
-            android:text="@string/btn_outbound"
-            android:textSize="18sp"
-            app:cornerRadius="8dp" />
+            android:text="@string/btn_outbound" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

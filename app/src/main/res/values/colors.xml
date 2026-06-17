@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="bg">#000000</color>          <!-- 배경: 검정 -->
-    <color name="fg">#FFFFFF</color>          <!-- 본문: 흰색 -->
-    <color name="accent">#FFD400</color>      <!-- 입고 위치: 고대비 노랑 -->
-    <color name="muted">#B0B0B0</color>       <!-- 라벨: 회색 -->
-    <color name="button">#1565C0</color>      <!-- 버튼: 진한 파랑 -->
+    <!-- 다크 산업용 팔레트 (단안 글라스 고대비) -->
+    <color name="bg">#0A0C10</color>             <!-- 화면 배경 -->
+    <color name="surface">#161B24</color>        <!-- 카드 -->
+    <color name="surface_variant">#212834</color><!-- 보조 버튼 / 칩 -->
+    <color name="divider">#2A323F</color>
+
+    <color name="fg">#F4F6FA</color>             <!-- 본문 -->
+    <color name="muted">#9AA6B4</color>          <!-- 보조 텍스트/라벨 -->
+
+    <color name="primary">#3B82F6</color>        <!-- 주 동작 -->
+    <color name="on_primary">#FFFFFF</color>
+    <color name="accent">#FFD166</color>         <!-- 위치 강조(고대비 앰버) -->
+    <color name="success">#34D399</color>
+    <color name="on_success">#08130D</color>
+    <color name="danger">#F87171</color>
+
+    <!-- 레거시 별칭 -->
+    <color name="button">#3B82F6</color>
     <color name="button_text">#FFFFFF</color>
 </resources>

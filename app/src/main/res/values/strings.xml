@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">입고위치 조회</string>
+    <string name="title_main">입출고 조회</string>
     <string name="label_barcode">바코드</string>
+    <string name="label_location">입고 위치</string>
+    <!-- 네비게이션 (음성 명령) -->
+    <string name="btn_home">처음으로</string>
+    <string name="btn_cancel">취소</string>
     <!-- 음성 명령 = 버튼 텍스트. 짧은 "스캔"은 WearHF 한국어 인식률이 낮아(→"입고"로 오인식)
          더 길고 또렷한 문구로 변경. -->
     <string name="btn_scan">바코드 스캔</string>

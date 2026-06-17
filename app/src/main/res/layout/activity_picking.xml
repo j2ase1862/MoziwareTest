@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  출고 피킹(읽기 가이드) 화면. 854×480 가로 고대비.
-  · 주문/진행률 상단, 현재 피킹 "위치"를 주인공으로 크게, 품목·수량 보조
-  · 완료 시 같은 큰 영역에 "출고 목적지" 표시
-  · 하단 버튼 text = WearHF 음성 명령(이전/다음/닫기)
+  출고 피킹(스캔 검증) · 854×480 다크 고대비.
+  상단바: [취소] · 주문 · 진행률   /  히어로: 피킹 위치(완료 시 목적지) + 품목 + 수량
+  상태 배너 / 하단 버튼(이전 · 스캔|출하확정 · 다음|닫기). 모든 버튼 text=음성 명령.
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,98 +12,151 @@
     android:background="@color/bg"
     android:padding="12dp">
 
+    <!-- 상단바 -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/cancelButton"
+        style="@style/Widget.Glass.Button.Ghost"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/btn_cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/orderText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:ellipsize="end"
+        android:gravity="center"
         android:maxLines="1"
         android:text="—"
         android:textColor="@color/fg"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/cancelButton"
         app:layout_constraintEnd_toStartOf="@id/progressText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/cancelButton"
+        app:layout_constraintTop_toTopOf="@id/cancelButton" />
 
     <TextView
         android:id="@+id/progressText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_chip"
+        android:minWidth="64dp"
+        android:gravity="center"
+        android:paddingStart="12dp"
+        android:paddingTop="7dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="7dp"
         android:text=""
         android:textColor="@color/muted"
-        android:textSize="18sp"
+        android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@id/orderText"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/cancelButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/cancelButton" />
 
-    <!-- 주인공: 현재 피킹 위치(완료 시 출고 목적지) -->
-    <TextView
-        android:id="@+id/locationText"
+    <View
+        android:id="@+id/divider"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:autoSizeMaxTextSize="88sp"
-        android:autoSizeMinTextSize="28sp"
-        android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:text=""
-        android:textColor="@color/accent"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/itemText"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/divider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/orderText" />
+        app:layout_constraintTop_toBottomOf="@id/cancelButton" />
+
+    <!-- 히어로: 피킹 위치(완료 시 출고 목적지) -->
+    <LinearLayout
+        android:id="@+id/heroCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_card"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="12dp"
+        app:layout_constraintBottom_toTopOf="@id/statusText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider">
+
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:autoSizeMaxTextSize="76sp"
+            android:autoSizeMinTextSize="26sp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/accent"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/itemText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text=""
+            android:textColor="@color/fg"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/qtyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_chip"
+            android:gravity="center"
+            android:paddingStart="14dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="14dp"
+            android:paddingBottom="6dp"
+            android:text=""
+            android:textColor="@color/fg"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progress"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:indeterminateTint="@color/primary"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@id/locationText"
-        app:layout_constraintEnd_toEndOf="@id/locationText"
-        app:layout_constraintStart_toStartOf="@id/locationText"
-        app:layout_constraintTop_toTopOf="@id/locationText" />
+        app:layout_constraintBottom_toBottomOf="@id/heroCard"
+        app:layout_constraintEnd_toEndOf="@id/heroCard"
+        app:layout_constraintStart_toStartOf="@id/heroCard"
+        app:layout_constraintTop_toTopOf="@id/heroCard" />
 
-    <TextView
-        android:id="@+id/itemText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:text=""
-        android:textColor="@color/fg"
-        android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@id/qtyText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/qtyText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text=""
-        android:textColor="@color/fg"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/statusText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+    <!-- 상태 배너 -->
     <TextView
         android:id="@+id/statusText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/bg_pill"
+        android:backgroundTint="@color/surface_variant"
         android:gravity="center"
-        android:minHeight="28dp"
+        android:paddingStart="16dp"
+        android:paddingTop="9dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="9dp"
         android:text=""
-        android:textColor="@color/muted"
-        android:textSize="15sp"
+        android:textColor="@color/fg"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/buttonRow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- 하단 버튼 -->
     <LinearLayout
         android:id="@+id/buttonRow"
         android:layout_width="0dp"
@@ -117,32 +169,29 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/prevButton"
+            style="@style/Widget.Glass.Button.Tonal"
             android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginEnd="6dp"
+            android:layout_height="62dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="@string/btn_prev"
-            android:textSize="20sp"
-            app:cornerRadius="8dp" />
+            android:text="@string/btn_prev" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/actionButton"
+            style="@style/Widget.Glass.Button.Primary"
             android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_marginEnd="6dp"
-            android:layout_weight="1"
-            android:text="@string/btn_pick_scan"
-            android:textSize="20sp"
-            app:cornerRadius="8dp" />
+            android:layout_height="62dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1.4"
+            android:text="@string/btn_pick_scan" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/nextButton"
+            style="@style/Widget.Glass.Button.Tonal"
             android:layout_width="0dp"
-            android:layout_height="56dp"
+            android:layout_height="62dp"
             android:layout_weight="1"
-            android:text="@string/btn_next"
-            android:textSize="20sp"
-            app:cornerRadius="8dp" />
+            android:text="@string/btn_next" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
