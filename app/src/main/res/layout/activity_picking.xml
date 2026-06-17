@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  854×480 단안 디스플레이용 가로 고대비 다크 레이아웃.
-  · 검정 배경 + 흰색/노랑 텍스트로 대비 최대화
-  · 입고 위치(locationText)를 화면의 주인공으로 가장 크게
-  · 하단 3개 버튼의 text 는 곧 WearHF 음성 명령(스캔/입고/입고제품)
+  출고 피킹(읽기 가이드) 화면. 854×480 가로 고대비.
+  · 주문/진행률 상단, 현재 피킹 "위치"를 주인공으로 크게, 품목·수량 보조
+  · 완료 시 같은 큰 영역에 "출고 목적지" 표시
+  · 하단 버튼 text = WearHF 음성 명령(이전/다음/닫기)
 -->
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,48 +13,47 @@
     android:background="@color/bg"
     android:padding="12dp">
 
-    <!-- 상단: 바코드 -->
     <TextView
-        android:id="@+id/barcodeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/label_barcode"
-        android:textColor="@color/muted"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/barcodeText"
+        android:id="@+id/orderText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:text="—"
         android:textColor="@color/fg"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintBaseline_toBaselineOf="@id/barcodeLabel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/barcodeLabel" />
+        app:layout_constraintEnd_toStartOf="@id/progressText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- 중앙: 입고 위치(주인공) -->
+    <TextView
+        android:id="@+id/progressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/muted"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@id/orderText"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 주인공: 현재 피킹 위치(완료 시 출고 목적지) -->
     <TextView
         android:id="@+id/locationText"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:gravity="center"
+        android:autoSizeMaxTextSize="88sp"
+        android:autoSizeMinTextSize="28sp"
         android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="32sp"
-        android:autoSizeMaxTextSize="96sp"
+        android:gravity="center"
+        android:text=""
         android:textColor="@color/accent"
         android:textStyle="bold"
-        android:text=""
-        app:layout_constraintBottom_toTopOf="@id/statusText"
+        app:layout_constraintBottom_toTopOf="@id/itemText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barcodeLabel" />
+        app:layout_constraintTop_toBottomOf="@id/orderText" />
 
     <ProgressBar
         android:id="@+id/progress"
@@ -66,68 +65,83 @@
         app:layout_constraintStart_toStartOf="@id/locationText"
         app:layout_constraintTop_toTopOf="@id/locationText" />
 
-    <!-- 안내/상태 메시지 -->
+    <TextView
+        android:id="@+id/itemText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:text=""
+        android:textColor="@color/fg"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@id/qtyText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/qtyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/fg"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/statusText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/statusText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:minHeight="40dp"
+        android:minHeight="28dp"
         android:text=""
-        android:textColor="@color/fg"
-        android:textSize="18sp"
+        android:textColor="@color/muted"
+        android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@id/buttonRow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 하단 버튼 행: text = 음성 명령 -->
     <LinearLayout
         android:id="@+id/buttonRow"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:baselineAligned="false"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/scanButton"
+            android:id="@+id/prevButton"
             android:layout_width="0dp"
             android:layout_height="56dp"
-            android:layout_weight="1"
             android:layout_marginEnd="6dp"
-            android:text="@string/btn_scan"
-            android:textSize="18sp"
+            android:layout_weight="1"
+            android:text="@string/btn_prev"
+            android:textSize="20sp"
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/inboundButton"
+            android:id="@+id/nextButton"
             android:layout_width="0dp"
             android:layout_height="56dp"
-            android:layout_weight="1"
             android:layout_marginEnd="6dp"
-            android:text="@string/btn_inbound"
-            android:textSize="18sp"
+            android:layout_weight="1"
+            android:text="@string/btn_next"
+            android:textSize="20sp"
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/inboundItemButton"
+            android:id="@+id/closeButton"
             android:layout_width="0dp"
             android:layout_height="56dp"
             android:layout_weight="1"
-            android:layout_marginEnd="6dp"
-            android:text="@string/btn_inbound_item"
-            android:textSize="18sp"
-            app:cornerRadius="8dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/outboundButton"
-            android:layout_width="0dp"
-            android:layout_height="56dp"
-            android:layout_weight="1"
-            android:text="@string/btn_outbound"
-            android:textSize="18sp"
+            android:text="@string/btn_close"
+            android:textSize="20sp"
             app:cornerRadius="8dp" />
     </LinearLayout>
 

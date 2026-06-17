@@ -56,6 +56,10 @@ class MainActivity : AppCompatActivity() {
         binding.scanButton.setOnClickListener { startScan() }
         binding.inboundButton.setOnClickListener { queryLocation("입고") }
         binding.inboundItemButton.setOnClickListener { queryLocation("입고제품") }
+        // 음성 "출고" → 출고 피킹 화면(주문 스캔 → 피킹 안내)
+        binding.outboundButton.setOnClickListener {
+            startActivity(Intent(this, PickingActivity::class.java))
+        }
 
         resetToIdle()
     }
@@ -82,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     private fun queryLocation(mode: String) {
         val barcode = lastBarcode
         if (barcode.isNullOrBlank()) {
-            showStatus("먼저 ‘스캔’ 이라고 말하세요")
+            showStatus("먼저 ‘바코드 스캔’ 이라고 말하세요")
             return
         }
 
@@ -111,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         lastBarcode = null
         binding.barcodeText.text = "—"
         binding.locationText.text = ""
-        showStatus("‘스캔’ 이라고 말하거나 스캔 버튼을 누르세요")
+        showStatus("’바코드 스캔’ 이라고 말하거나 버튼을 누르세요")
     }
 
     /** 조회 중에는 진행 표시를 켜고 버튼을 잠가 중복 호출을 막는다. */

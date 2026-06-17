@@ -27,9 +27,10 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        // BODA.VMS.Web 서버 주소. (TODO #1) 실기 배포 시 실제 HTTPS 주소로 교체.
-        //  - Android 에뮬레이터에서 PC 로컬 서버를 가리킬 때: 10.0.2.2 가 호스트 PC.
-        buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:5000\"")
+        // BODA.VMS.Web 서버 주소.
+        //  - 운영/고객 PoC: 배포된 실서버(HTTPS, 공인 인증서)
+        //  - 로컬 스텁 테스트 시: 에뮬레이터 http://10.0.2.2:5000 / 실기 http://<PC LAN IP>:5000
+        buildConfigField("String", "BASE_URL", "\"https://boda-vms.com\"")
         // 핸즈프리 익명 엔드포인트 보호용 키(서버 X-API-Key 필터와 일치시킬 것). 미사용 시 빈 값.
         buildConfigField("String", "API_KEY", "\"\"")
     }

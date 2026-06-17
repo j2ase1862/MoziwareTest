@@ -16,6 +16,13 @@ sealed interface GlassResult {
     data class Error(val message: String) : GlassResult
 }
 
+/** 출고 피킹 목록 조회 결과. */
+sealed interface PickResult {
+    data class Success(val pickList: PickList) : PickResult
+    data class NotFound(val message: String) : PickResult
+    data class Error(val message: String) : PickResult
+}
+
 /**
  * BODA.VMS.Web 의 글라스 전용 엔드포인트를 호출하는 얇은 HTTP 클라이언트.
  * 네트워크/파싱은 모두 [Dispatchers.IO] 에서 수행하고, 호출부는 코루틴으로 await 한다.
@@ -64,6 +71,39 @@ class GlassApi(
                 GlassResult.Error("네트워크 오류: ${e.message ?: "연결 실패"}")
             } catch (e: Exception) {
                 GlassResult.Error("응답 처리 오류: ${e.message ?: e.javaClass.simpleName}")
+            }
+        }
+
+    /**
+     * GET /api/glass/pick-list?orderNo={주문번호}
+     * 출고 주문 기반 피킹 목록(읽기 가이드).
+     */
+    suspend fun queryPickList(orderNo: String): PickResult =
+        withContext(Dispatchers.IO) {
+            try {
+                val url = "$baseUrl/api/glass/pick-list".toHttpUrl().newBuilder()
+                    .addQueryParameter("orderNo", orderNo)
+                    .build()
+
+                val requestBuilder = Request.Builder().url(url).get()
+                if (apiKey.isNotBlank()) {
+                    requestBuilder.header("X-API-Key", apiKey)
+                }
+
+                client.newCall(requestBuilder.build()).execute().use { response ->
+                    when {
+                        response.isSuccessful -> {
+                            val body = response.body?.string().orEmpty()
+                            PickResult.Success(json.decodeFromString<PickList>(body))
+                        }
+                        response.code == 404 -> PickResult.NotFound("등록되지 않은 주문번호")
+                        else -> PickResult.Error("서버 오류 (HTTP ${response.code})")
+                    }
+                }
+            } catch (e: IOException) {
+                PickResult.Error("네트워크 오류: ${e.message ?: "연결 실패"}")
+            } catch (e: Exception) {
+                PickResult.Error("응답 처리 오류: ${e.message ?: e.javaClass.simpleName}")
             }
         }
 }
