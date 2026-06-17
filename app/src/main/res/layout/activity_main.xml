@@ -31,7 +31,17 @@
         style="@style/Widget.Glass.Button.Ghost"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
         android:text="@string/btn_home"
+        app:layout_constraintEnd_toStartOf="@id/exitButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/exitButton"
+        style="@style/Widget.Glass.Button.Ghost"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:text="@string/btn_exit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

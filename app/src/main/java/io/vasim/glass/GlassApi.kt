@@ -77,6 +77,24 @@ class GlassApi(
         }
 
     /**
+     * GET /api/glass/orders — 활성 출고 목록(요약). 실패 시 null.
+     */
+    suspend fun queryOrders(): List<GlassOrder>? =
+        withContext(Dispatchers.IO) {
+            try {
+                val req = Request.Builder().url("$baseUrl/api/glass/orders").get()
+                if (apiKey.isNotBlank()) req.header("X-API-Key", apiKey)
+                client.newCall(req.build()).execute().use { resp ->
+                    if (resp.isSuccessful)
+                        json.decodeFromString<List<GlassOrder>>(resp.body?.string().orEmpty())
+                    else null
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+    /**
      * GET /api/glass/pick-list?orderNo={주문번호}
      * 출고 주문 기반 피킹 목록(읽기 가이드).
      */

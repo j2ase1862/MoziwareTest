@@ -52,9 +52,10 @@ class MainActivity : AppCompatActivity() {
         binding.inboundButton.setOnClickListener { queryLocation("입고") }
         binding.inboundItemButton.setOnClickListener { queryLocation("입고제품") }
         binding.outboundButton.setOnClickListener {
-            startActivity(Intent(this, PickingActivity::class.java))
+            startActivity(Intent(this, OrderListActivity::class.java))   // 음성 "출고" → 출고 목록
         }
         binding.homeButton.setOnClickListener { resetToIdle() }   // 음성 "처음으로"
+        binding.exitButton.setOnClickListener { finishAffinity() } // 음성 "종료" → 앱 종료
 
         resetToIdle()
     }

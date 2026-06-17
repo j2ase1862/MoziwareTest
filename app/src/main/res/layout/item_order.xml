@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 출고 목록 한 줄(주문) — 탭/음성 선택. text=WearHF 음성 등록(번호 배지로도 선택). -->
+<com.google.android.material.button.MaterialButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Widget.Glass.Button.Tonal"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:layout_marginBottom="8dp"
+    android:gravity="center_vertical|start"
+    android:paddingStart="18dp"
+    android:paddingEnd="18dp"
+    android:textAlignment="textStart"
+    android:textSize="18sp" />

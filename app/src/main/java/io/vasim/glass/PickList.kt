@@ -16,6 +16,16 @@ data class PickList(
     val lines: List<PickLine> = emptyList(),
 )
 
+/** 출고 목록 항목 — 서버 GlassOrderDto와 1:1 (경량 요약). */
+@Serializable
+data class GlassOrder(
+    val orderNo: String = "",
+    val customerName: String? = null,
+    val destination: String? = null,
+    val lineCount: Int = 0,
+    val status: String = "",
+)
+
 /** 피킹 한 줄 — "어디서 무엇을 몇 개". */
 @Serializable
 data class PickLine(
