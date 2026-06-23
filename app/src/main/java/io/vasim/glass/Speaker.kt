@@ -20,16 +20,38 @@ import java.util.Locale
  */
 class Speaker(context: Context) {
 
+    companion object {
+        /** 발화 속도(1.0=기본). 느리게 해 또렷하게. */
+        private const val SPEECH_RATE = 0.8f
+        /** 발화 높낮이(1.0=기본). */
+        private const val SPEECH_PITCH = 1.0f
+        /** 절(. , ! ?) 사이에 끼우는 무음 길이(ms) — 끊어 읽기. */
+        private const val PAUSE_MS = 350L
+    }
+
     private val appContext = context.applicationContext
     private var ready = false
     private var pending: String? = null
 
     private val tts: TextToSpeech = TextToSpeech(context.applicationContext) { status ->
         if (status == TextToSpeech.SUCCESS) {
-            tts.language = Locale.KOREAN
+            tts.language = Locale.KOREA   // ko-KR 전체 로케일
+            tts.setSpeechRate(SPEECH_RATE)   // 느리게 → 또렷하게
+            tts.setPitch(SPEECH_PITCH)
+            selectBestKoreanVoice()
             ready = true
             pending?.let { say(it) }
             pending = null
+        }
+    }
+
+    /** 엔진이 한국어 보이스를 여러 개 제공하면 최고 품질·오프라인 것을 고른다. */
+    private fun selectBestKoreanVoice() {
+        runCatching {
+            tts.voices
+                ?.filter { it.locale.language == "ko" && !it.isNetworkConnectionRequired }
+                ?.maxByOrNull { it.quality }
+                ?.let { tts.voice = it }
         }
     }
 
@@ -50,19 +72,43 @@ class Speaker(context: Context) {
         tts.stop()
     }
 
+    /**
+     * 절(. , ! ?) 단위로 끊어, 각 절 사이에 [PAUSE_MS] 무음을 끼워 또박또박 읽는다.
+     * 첫 절은 QUEUE_FLUSH 로 이전 발화를 끊고, 이후는 QUEUE_ADD 로 이어 붙인다.
+     */
     private fun say(text: String) {
-        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, text.hashCode().toString())
+        val parts = text.split(Regex("(?<=[.,!?])\\s*")).filter { it.isNotBlank() }
+        if (parts.isEmpty()) return
+        var mode = TextToSpeech.QUEUE_FLUSH
+        parts.forEachIndexed { i, part ->
+            tts.speak(part, mode, null, "u$i")
+            mode = TextToSpeech.QUEUE_ADD
+            if (i < parts.lastIndex) tts.playSilentUtterance(PAUSE_MS, TextToSpeech.QUEUE_ADD, "s$i")
+        }
     }
 
-    /** 발화 전 화면 장식 기호 제거(읽으면 어색한 문자). */
-    private fun clean(s: String): String =
-        s.replace("✓", "")
+    /**
+     * 화면용 약식 문구를 소리내어 읽기 자연스럽게 정리한다.
+     *  - 장식 기호(✓ ❌ … ‘ ’ “ ”) 제거
+     *  - 중점 `·` → 문장 끊기(자연스러운 쉼)
+     *  - 슬래시 `/` → '또는', 괄호 보조설명 → 쉼표
+     *  - 공백/중복 종결부호 정리 후 문장 끝맺음(하강 억양)
+     */
+    private fun clean(s: String): String {
+        var t = s
+            .replace("✓", "")
             .replace("❌", "")
-            .replace("‘", "").replace("’", "")
-            .replace("“", "").replace("”", "")
-            .replace("·", " ")
             .replace("…", " ")
-            .trim()
+            .replace("‘", "").replace("’", "")     // 음성 명령 인용부호
+            .replace("“", "").replace("”", "")
+            .replace("·", ". ")                     // 중점 → 문장 끊기
+            .replace("/", " 또는 ")                 // 슬래시 → '또는'
+            .replace("(", ", ").replace(")", "")    // 괄호 보조설명 → 쉼표
+        t = t.replace(Regex("\\s+"), " ").trim()                 // 공백 정리
+        t = t.replace(Regex("([.!?])\\s*\\."), "$1")             // '! .' 같은 중복 종결 정리
+        t = t.replace(Regex("[\\s.,]+$"), "")                    // 끝 공백/구두점 제거
+        return if (t.isBlank()) t else "$t."                     // 문장 끝맺음
+    }
 
     /** 액티비티 onDestroy 에서 호출해 엔진 자원을 해제한다. */
     fun shutdown() {
