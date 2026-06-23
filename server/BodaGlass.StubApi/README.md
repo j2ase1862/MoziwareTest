@@ -19,14 +19,26 @@ dotnet run --project server/BodaGlass.StubApi
 
 ## 엔드포인트 계약
 
+> 전체 계약(요청/응답 DTO·오류·인증)은 **[`docs/glass-api-contract.md`](../../docs/glass-api-contract.md)** 참조(운영팀 전달용).
+
+이 스텁이 구현한 엔드포인트:
+
 ```
 GET /api/glass/inbound-location?barcode={바코드}&mode={입고|입고제품}
 → 200 { itemCode, itemName, locationText, coord{ x, y, z } }   # camelCase = Kotlin DTO 와 자동 매칭
 → 400 { message: "barcode 파라미터가 필요합니다" }
 → 404 { message: "등록되지 않은 바코드" }
 
-GET /api/glass/ping → 200 { ok: true }   # 앱/네트워크 디버깅용
+GET /api/glass/orders     → 200 [ { orderNo, customerName, destination, lineCount, status } ]
+GET /api/glass/summary    → 200 { inboundWaiting, outboundWaiting, stockSku, expiringCount }
+GET /api/glass/inventory?coldChain=&expiringOnly=&query=
+                          → 200 [ { itemCode, itemName, qty, unit, locationText, coldChain,
+                                    lotNo, mfgDate, expiryDate, daysToExpiry, fefoFlag } ]   # 서버가 FEFO 정렬·계산
+GET /api/glass/ping       → 200 { ok: true }   # 앱/네트워크 디버깅용
 ```
+
+> 앱이 호출하지만 이 스텁엔 아직 없는 것: `pick-list`, `inbound-confirm`, `pick-confirm`, `ship-confirm`
+> (계약서에 명세됨 — 운영 구현 필요).
 
 검증된 응답 예:
 
