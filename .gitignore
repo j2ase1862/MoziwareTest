@@ -25,3 +25,9 @@ local.properties
 /NetProbe.class
 /screenshot-*.png
 /qr-*.png
+
+# IDE 설정 전체
+/.idea/
+
+# PoC 영상 작업물(ffmpeg 대용량 바이너리 포함)
+/poc-video/
