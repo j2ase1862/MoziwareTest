@@ -4,6 +4,12 @@ public interface IWarehouseRepository
 {
     /// <summary>바코드로 입고 위치를 조회. 없으면 null.</summary>
     WarehouseItem? FindByBarcode(string barcode);
+
+    /// <summary>전체 재고(로트 단위). 실 서버에서는 EF Core 쿼리로 교체.</summary>
+    IReadOnlyList<StockItem> AllStock();
+
+    /// <summary>활성 출고 주문 목록.</summary>
+    IReadOnlyList<OutboundOrder> AllOrders();
 }
 
 /// <summary>
@@ -23,4 +29,8 @@ public sealed class InMemoryWarehouseRepository : IWarehouseRepository
 
     public WarehouseItem? FindByBarcode(string barcode) =>
         _byBarcode.TryGetValue(barcode, out var item) ? item : null;
+
+    public IReadOnlyList<StockItem> AllStock() => SeedData.Stock;
+
+    public IReadOnlyList<OutboundOrder> AllOrders() => SeedData.Orders;
 }
