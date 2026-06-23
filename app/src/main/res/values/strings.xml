@@ -21,6 +21,10 @@
     <string name="btn_inbound_confirm">입고 확정</string>
     <string name="btn_outbound">출고</string>
 
+    <!-- 음성 안내 토글. 라벨 = 현재 상태의 반대 동작이자 WearHF 음성 명령. -->
+    <string name="btn_voice_off">음성 끄기</string>
+    <string name="btn_voice_on">음성 켜기</string>
+
     <!-- 출고 피킹 화면 버튼 (음성 명령) -->
     <string name="btn_prev">이전</string>
     <string name="btn_next">다음</string>

@@ -23,8 +23,18 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/homeButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/homeButton"
+        app:layout_constraintEnd_toStartOf="@id/voiceButton"
         app:layout_constraintTop_toTopOf="@id/homeButton" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/voiceButton"
+        style="@style/Widget.Glass.Button.Ghost"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/btn_voice_off"
+        app:layout_constraintEnd_toStartOf="@id/homeButton"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/homeButton"
