@@ -23,8 +23,9 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:theme="@style/Theme.Glass">
 
+        <!-- 홈 대시보드 = 런처(앱 진입점). -->
         <activity
-            android:name=".MainActivity"
+            android:name=".DashboardActivity"
             android:exported="true"
             android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|keyboardHidden"
@@ -34,6 +35,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 입고 작업 화면(홈 '입고' 타일로 진입). -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            tools:ignore="LockedOrientationActivity" />
+
+        <activity
+            android:name=".StockListActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            tools:ignore="LockedOrientationActivity" />
 
         <activity
             android:name=".OrderListActivity"

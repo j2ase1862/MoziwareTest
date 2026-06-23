@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  재고 목록 한 줄 (cımō 디자인 반영).
+  [번호배지] · 품명 + 콜드체인 태그 + (임박 시) FEFO 태그 / 품목코드 · 현재고 · 로케이션
+  콜드체인 태그 색은 코드에서 backgroundTint/textColor 로 지정. fefoTag 는 임박분만 표시.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/stockRow"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_row"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="62dp"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/badgeText"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:background="@drawable/bg_badge"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:importantForAccessibility="no"
+        android:text="1"
+        android:textColor="@color/badge_fg"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- 1행: 품명 + 콜드체인/FEFO 태그 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/nameText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:importantForAccessibility="no"
+                android:maxLines="1"
+                android:text="—"
+                android:textColor="@color/fg"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/coldTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="9dp"
+                android:background="@drawable/bg_tag"
+                android:importantForAccessibility="no"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text=""
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/fefoTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_tag"
+                android:importantForAccessibility="no"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text=""
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- 2행: 품목코드 · 현재고 · 로케이션 -->
+        <TextView
+            android:id="@+id/subText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:importantForAccessibility="no"
+            android:maxLines="1"
+            android:text=""
+            android:textColor="@color/muted"
+            android:textSize="13.5sp" />
+    </LinearLayout>
+
+</LinearLayout>

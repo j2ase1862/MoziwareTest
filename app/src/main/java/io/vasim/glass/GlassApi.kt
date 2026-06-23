@@ -94,6 +94,51 @@ class GlassApi(
             }
         }
 
+    /** GET /api/glass/summary — 홈 대시보드 집계. 실패 시 null. */
+    suspend fun querySummary(): GlassSummary? =
+        withContext(Dispatchers.IO) {
+            try {
+                val req = Request.Builder().url("$baseUrl/api/glass/summary").get()
+                if (apiKey.isNotBlank()) req.header("X-API-Key", apiKey)
+                client.newCall(req.build()).execute().use { resp ->
+                    if (resp.isSuccessful)
+                        json.decodeFromString<GlassSummary>(resp.body?.string().orEmpty())
+                    else null
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+
+    /**
+     * GET /api/glass/inventory?coldChain=&expiringOnly=&query= — 재고 목록.
+     * @param expiringOnly 유통기한 임박(FEFO)만. @param coldChain FROZEN|CHILLED|AMBIENT 필터.
+     * 실패 시 null.
+     */
+    suspend fun queryInventory(
+        coldChain: String? = null,
+        expiringOnly: Boolean = false,
+        query: String? = null,
+    ): List<StockItem>? =
+        withContext(Dispatchers.IO) {
+            try {
+                val urlBuilder = "$baseUrl/api/glass/inventory".toHttpUrl().newBuilder()
+                coldChain?.takeIf { it.isNotBlank() }?.let { urlBuilder.addQueryParameter("coldChain", it) }
+                if (expiringOnly) urlBuilder.addQueryParameter("expiringOnly", "true")
+                query?.takeIf { it.isNotBlank() }?.let { urlBuilder.addQueryParameter("query", it) }
+
+                val req = Request.Builder().url(urlBuilder.build()).get()
+                if (apiKey.isNotBlank()) req.header("X-API-Key", apiKey)
+                client.newCall(req.build()).execute().use { resp ->
+                    if (resp.isSuccessful)
+                        json.decodeFromString<List<StockItem>>(resp.body?.string().orEmpty())
+                    else null
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+
     /**
      * GET /api/glass/pick-list?orderNo={주문번호}
      * 출고 주문 기반 피킹 목록(읽기 가이드).

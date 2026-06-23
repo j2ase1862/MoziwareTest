@@ -47,6 +47,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            // 디버그 빌드는 로컬 스텁(BodaGlass.StubApi)을 바라본다.
+            //   실기(시모): `adb reverse tcp:5000 tcp:5000` 후 localhost:5000 으로 접속.
+            //   에뮬레이터: 필요 시 http://10.0.2.2:5000 로 바꾼다.
+            buildConfigField("String", "BASE_URL", "\"http://localhost:5000\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
