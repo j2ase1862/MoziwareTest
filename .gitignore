@@ -31,3 +31,6 @@ local.properties
 
 # PoC 영상 작업물(ffmpeg 대용량 바이너리 포함)
 /poc-video/
+
+# PoC 코드/생성물
+/poc-codes/
