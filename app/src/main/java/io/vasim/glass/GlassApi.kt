@@ -128,29 +128,40 @@ class GlassApi(
         }
 
     /**
+     * POST /api/glass/inbound-confirm — 입고(적치) 확정. 재고 누적 + 실시간 반영.
+     * 실패(네트워크/404 미등록 바코드) 시 null.
+     */
+    suspend fun confirmInbound(barcode: String, qty: Int = 1): InboundConfirmResult? =
+        postJson(
+            "/api/glass/inbound-confirm",
+            json.encodeToString(InboundConfirmRequest.serializer(), InboundConfirmRequest(barcode, qty))
+        ) { body -> json.decodeFromString<InboundConfirmResult>(body) }
+
+    /**
      * POST /api/glass/pick-confirm — 스캔 검증 피킹 확정(2차).
      * 실패(네트워크/404 등) 시 null.
      */
     suspend fun confirmPick(orderNo: String, barcode: String, qty: Int = 1): PickConfirmResult? =
-        postJson("/api/glass/pick-confirm", PickConfirmRequest(orderNo, barcode, qty)) { body ->
-            json.decodeFromString<PickConfirmResult>(body)
-        }
+        postJson(
+            "/api/glass/pick-confirm",
+            json.encodeToString(PickConfirmRequest.serializer(), PickConfirmRequest(orderNo, barcode, qty))
+        ) { body -> json.decodeFromString<PickConfirmResult>(body) }
 
     /** POST /api/glass/ship-confirm — 출하 확정(2차). 갱신된 피킹 목록 반환, 실패 시 null. */
     suspend fun confirmShip(orderNo: String): PickList? =
-        postJson("/api/glass/ship-confirm", PickConfirmRequest(orderNo, "", 0)) { body ->
-            json.decodeFromString<PickList>(body)
-        }
+        postJson(
+            "/api/glass/ship-confirm",
+            json.encodeToString(PickConfirmRequest.serializer(), PickConfirmRequest(orderNo, "", 0))
+        ) { body -> json.decodeFromString<PickList>(body) }
 
-    /** JSON 바디 POST 후 성공 응답을 [decode]. 실패하면 null. */
+    /** 직렬화된 JSON 바디를 POST 후 성공 응답을 [decode]. 실패하면 null. */
     private suspend fun <T> postJson(
         path: String,
-        body: PickConfirmRequest,
+        jsonBody: String,
         decode: (String) -> T,
     ): T? = withContext(Dispatchers.IO) {
         try {
-            val requestBody = json.encodeToString(PickConfirmRequest.serializer(), body)
-                .toRequestBody(jsonMedia)
+            val requestBody = jsonBody.toRequestBody(jsonMedia)
             val requestBuilder = Request.Builder().url("$baseUrl$path").post(requestBody)
             if (apiKey.isNotBlank()) {
                 requestBuilder.header("X-API-Key", apiKey)

@@ -30,6 +30,9 @@ class MainActivity : AppCompatActivity() {
     /** 가장 최근 스캔된 바코드. 조회는 이 값을 사용한다. */
     private var lastBarcode: String? = null
 
+    /** 입고 위치가 조회·표시된 상태인가. '입고 확정'은 이 상태에서만 활성. */
+    private var locationShown = false
+
     private val scanLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -51,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         binding.scanButton.setOnClickListener { startScan() }
         binding.inboundButton.setOnClickListener { queryLocation("입고") }
         binding.inboundItemButton.setOnClickListener { queryLocation("입고제품") }
+        binding.inboundConfirmButton.setOnClickListener { confirmInbound() }   // 음성 "입고 확정"
         binding.outboundButton.setOnClickListener {
             startActivity(Intent(this, OrderListActivity::class.java))   // 음성 "출고" → 출고 목록
         }
@@ -71,6 +75,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun onBarcodeScanned(code: String) {
         lastBarcode = code
+        locationShown = false
+        updateConfirmEnabled()
         binding.barcodeText.text = code
         binding.locationText.text = ""
         binding.hintText.text = ""
@@ -87,6 +93,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         setLoading(true)
+        locationShown = false
+        updateConfirmEnabled()
         binding.locationText.text = ""
         binding.hintText.text = ""
         binding.warehouseMap.setLocation(null)
@@ -110,12 +118,45 @@ class MainActivity : AppCompatActivity() {
         binding.warehouseMap.setLocation(p)
         binding.locationText.text = text.ifBlank { "위치 정보 없음" }
         binding.hintText.text = if (p.ok) LocationFormat.hint(p) else ""
+        locationShown = true
+        updateConfirmEnabled()
         val name = location.itemName?.takeIf { it.isNotBlank() }
-        showStatus(name?.let { "✓ $it" } ?: "✓ 조회 완료", Status.SUCCESS)
+        showStatus(name?.let { "✓ $it · ‘입고 확정’ 가능" } ?: "✓ 조회 완료 · ‘입고 확정’ 가능", Status.SUCCESS)
+    }
+
+    /** "입고 확정" — 스캔·조회한 제품의 적치를 확정(재고 누적 + 웹 실시간 반영). */
+    private fun confirmInbound() {
+        val barcode = lastBarcode
+        if (barcode.isNullOrBlank() || !locationShown) {
+            showStatus("먼저 ‘바코드 스캔’ 후 ‘입고’로 위치를 확인하세요", Status.NEUTRAL)
+            return
+        }
+        setLoading(true)
+        showStatus("입고 확정 중…", Status.NEUTRAL)
+        lifecycleScope.launch {
+            val res = api.confirmInbound(barcode)
+            setLoading(false)
+            if (res == null || !res.confirmed) {
+                showStatus("입고 확정 실패(네트워크/미등록 바코드) · 다시 시도", Status.ERROR)
+                return@launch
+            }
+            locationShown = false           // 한 번 확정하면 비활성(중복 확정 방지)
+            updateConfirmEnabled()
+            val name = res.itemName.ifBlank { res.itemCode }
+            showStatus("✓ $name 입고 확정 · 재고 ${res.stockAfter}", Status.SUCCESS)
+        }
+    }
+
+    /** '입고 확정' 버튼 가용 상태(위치 조회 후에만) 시각 반영. */
+    private fun updateConfirmEnabled() {
+        binding.inboundConfirmButton.isEnabled = locationShown
+        binding.inboundConfirmButton.alpha = if (locationShown) 1f else 0.45f
     }
 
     private fun resetToIdle() {
         lastBarcode = null
+        locationShown = false
+        updateConfirmEnabled()
         binding.barcodeText.text = "—"
         binding.locationText.text = ""
         binding.hintText.text = ""
@@ -128,6 +169,7 @@ class MainActivity : AppCompatActivity() {
         binding.scanButton.isEnabled = !loading
         binding.inboundButton.isEnabled = !loading
         binding.inboundItemButton.isEnabled = !loading
+        binding.inboundConfirmButton.isEnabled = !loading && locationShown
     }
 
     private fun showStatus(message: String, kind: Status = Status.NEUTRAL) {

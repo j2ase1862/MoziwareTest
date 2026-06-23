@@ -18,6 +18,7 @@
     <string name="btn_scan">바코드 스캔</string>
     <string name="btn_inbound">입고</string>
     <string name="btn_inbound_item">입고제품</string>
+    <string name="btn_inbound_confirm">입고 확정</string>
     <string name="btn_outbound">출고</string>
 
     <!-- 출고 피킹 화면 버튼 (음성 명령) -->
