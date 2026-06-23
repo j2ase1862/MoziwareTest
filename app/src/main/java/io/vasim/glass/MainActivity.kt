@@ -62,25 +62,14 @@ class MainActivity : AppCompatActivity() {
         }
         binding.homeButton.setOnClickListener { resetToIdle() }   // 음성 "처음으로"
         binding.exitButton.setOnClickListener { finishAffinity() } // 음성 "종료" → 앱 종료
-        binding.voiceButton.setOnClickListener { toggleVoice() }   // 음성 "음성 끄기"/"음성 켜기"
+        binding.voiceButton.bindVoiceToggle(speaker)   // 음성 "음성 끄기"/"음성 켜기"
 
-        updateVoiceButton()
         resetToIdle()
     }
 
-    /** 음성 안내 on/off 전환. 켤 때 확인 발화, 끌 때 진행 중 발화 중단. */
-    private fun toggleVoice() {
-        val enabled = !VoiceSetting.enabled(this)
-        VoiceSetting.setEnabled(this, enabled)
-        updateVoiceButton()
-        if (enabled) speaker.speak("음성 안내를 켰습니다") else speaker.stop()
-    }
-
-    /** 토글 버튼 라벨을 현재 상태의 반대 동작으로 갱신(= WearHF 음성 명령). */
-    private fun updateVoiceButton() {
-        binding.voiceButton.setText(
-            if (VoiceSetting.enabled(this)) R.string.btn_voice_off else R.string.btn_voice_on
-        )
+    override fun onResume() {
+        super.onResume()
+        binding.voiceButton.refreshVoiceLabel()   // 다른 화면에서 바뀐 상태 반영
     }
 
     override fun onDestroy() {

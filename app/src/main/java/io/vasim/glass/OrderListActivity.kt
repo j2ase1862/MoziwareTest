@@ -46,10 +46,12 @@ class OrderListActivity : AppCompatActivity() {
         binding.scanOrderButton.setOnClickListener {                         // "주문 스캔"
             startActivity(Intent(this, PickingActivity::class.java))
         }
+        binding.voiceButton.bindVoiceToggle(speaker)                         // "음성 끄기"/"음성 켜기"
     }
 
     override fun onResume() {
         super.onResume()
+        binding.voiceButton.refreshVoiceLabel()   // 다른 화면에서 바뀐 상태 반영
         load()
     }
 

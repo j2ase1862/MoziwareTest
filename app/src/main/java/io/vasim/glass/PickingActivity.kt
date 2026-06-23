@@ -64,6 +64,7 @@ class PickingActivity : AppCompatActivity() {
 
         binding.cancelButton.setOnClickListener { finish() }   // 음성 "취소" → 앱 홈
         binding.prevButton.setOnClickListener { step(-1) }
+        binding.voiceButton.bindVoiceToggle(speaker)           // 음성 "음성 끄기"/"음성 켜기"
 
         // 재생성 복원: extra > 저장된 주문번호 > 신규 주문 스캔
         val preset = intent.getStringExtra(EXTRA_ORDER_NO)
@@ -73,6 +74,11 @@ class PickingActivity : AppCompatActivity() {
             !restored.isNullOrBlank() -> loadOrder(restored)
             else -> startOrderScan()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.voiceButton.refreshVoiceLabel()   // 다른 화면에서 바뀐 상태 반영
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

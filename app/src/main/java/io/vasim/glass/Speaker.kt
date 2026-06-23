@@ -2,6 +2,7 @@ package io.vasim.glass
 
 import android.content.Context
 import android.speech.tts.TextToSpeech
+import com.google.android.material.button.MaterialButton
 import java.util.Locale
 
 /**
@@ -87,4 +88,24 @@ object VoiceSetting {
 
     private fun prefs(context: Context) =
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+}
+
+/** 토글 버튼 라벨을 현재 상태의 반대 동작('음성 끄기'⇄'음성 켜기')으로 맞춘다. */
+fun MaterialButton.refreshVoiceLabel() = setText(
+    if (VoiceSetting.enabled(context)) R.string.btn_voice_off else R.string.btn_voice_on
+)
+
+/**
+ * 음성 토글 버튼 배선(홈·피킹·출고목록 공용). 누르면 전역 [VoiceSetting] 을 뒤집고
+ * 라벨을 갱신한다. 켤 때 확인 발화, 끌 때 진행 중 발화 중단.
+ * 다른 화면에서 바뀐 상태 반영을 위해 onResume 에서 [refreshVoiceLabel] 도 호출할 것.
+ */
+fun MaterialButton.bindVoiceToggle(speaker: Speaker) {
+    refreshVoiceLabel()
+    setOnClickListener {
+        val enabled = !VoiceSetting.enabled(context)
+        VoiceSetting.setEnabled(context, enabled)
+        refreshVoiceLabel()
+        if (enabled) speaker.speak("음성 안내를 켰습니다") else speaker.stop()
+    }
 }
