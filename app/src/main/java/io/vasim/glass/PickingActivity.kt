@@ -1,7 +1,6 @@
 package io.vasim.glass
 
 import android.app.Activity
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
@@ -45,7 +44,7 @@ class PickingActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val code = if (result.resultCode == Activity.RESULT_OK)
-            result.data?.getStringExtra(BarcodeScanner.EXTRA_RESULT) else null
+            BarcodeScanner.extractResult(result.data) else null
 
         when {
             code.isNullOrBlank() ->
@@ -88,7 +87,7 @@ class PickingActivity : AppCompatActivity() {
 
     private fun launchScanner() {
         try {
-            scanLauncher.launch(Intent(BarcodeScanner.ACTION_SCAN))
+            scanLauncher.launch(BarcodeScanner.scanIntent(this))
         } catch (e: Exception) {
             showStatus("내장 스캐너를 호출할 수 없습니다 · 기기 Intent 키 확인", Status.ERROR)
         }

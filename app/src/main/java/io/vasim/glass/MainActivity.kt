@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     ) { result ->
         when (result.resultCode) {
             Activity.RESULT_OK -> {
-                val code = result.data?.getStringExtra(BarcodeScanner.EXTRA_RESULT)
+                val code = BarcodeScanner.extractResult(result.data)
                 if (!code.isNullOrBlank()) onBarcodeScanned(code)
                 else showStatus("바코드를 읽지 못했습니다. 다시 ‘바코드 스캔’", Status.ERROR)
             }
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity() {
     /** "바코드 스캔" — 내장 스캐너 호출. */
     private fun startScan() {
         try {
-            scanLauncher.launch(Intent(BarcodeScanner.ACTION_SCAN))
+            scanLauncher.launch(BarcodeScanner.scanIntent(this))
         } catch (e: Exception) {
             showStatus("내장 스캐너를 호출할 수 없습니다 · 기기 Intent 키 확인", Status.ERROR)
         }

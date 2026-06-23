@@ -4,6 +4,16 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- targetSdk 30+ 패키지 가시성: 내장 스캐너 action 해석(resolveActivity)을 위해 선언. -->
+    <queries>
+        <intent>
+            <action android:name="cn.moziware.barcodescanner.action.SCAN_BARCODE" />
+        </intent>
+        <intent>
+            <action android:name="com.realwear.barcodereader.intent.action.SCAN_BARCODE" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
