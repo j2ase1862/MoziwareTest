@@ -34,6 +34,7 @@ class PickingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPickingBinding
     private val api = GlassApi()
+    private lateinit var speaker: Speaker
 
     private var pickList: PickList? = null
     private var index = 0                 // 0..lines.size — lines.size 이면 목적지/출하 화면
@@ -59,6 +60,7 @@ class PickingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPickingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        speaker = Speaker(this)   // 아래 loadOrder/startOrderScan 의 showStatus 보다 먼저 준비
 
         binding.cancelButton.setOnClickListener { finish() }   // 음성 "취소" → 앱 홈
         binding.prevButton.setOnClickListener { step(-1) }
@@ -76,6 +78,11 @@ class PickingActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (orderNo.isNotBlank()) outState.putString(STATE_ORDER_NO, orderNo)
+    }
+
+    override fun onDestroy() {
+        speaker.shutdown()
+        super.onDestroy()
     }
 
     private fun startOrderScan() {
@@ -97,7 +104,7 @@ class PickingActivity : AppCompatActivity() {
         setLoading(true)
         binding.orderText.text = scanned
         binding.locationText.text = ""
-        showStatus("피킹 목록 조회 중…", Status.NEUTRAL)
+        showStatus("피킹 목록 조회 중…", Status.NEUTRAL, speak = false)
         lifecycleScope.launch {
             val result = api.queryPickList(scanned)
             setLoading(false)
@@ -121,7 +128,7 @@ class PickingActivity : AppCompatActivity() {
         val order = orderNo
         if (order.isBlank() || pickList == null) return
         setLoading(true)
-        showStatus("확정 중…", Status.NEUTRAL)
+        showStatus("확정 중…", Status.NEUTRAL, speak = false)
         lifecycleScope.launch {
             val res = api.confirmPick(order, barcode)
             setLoading(false)
@@ -157,7 +164,7 @@ class PickingActivity : AppCompatActivity() {
         val order = orderNo
         if (order.isBlank()) return
         setLoading(true)
-        showStatus("출하 확정 중…", Status.NEUTRAL)
+        showStatus("출하 확정 중…", Status.NEUTRAL, speak = false)
         lifecycleScope.launch {
             val updated = api.confirmShip(order)
             setLoading(false)
@@ -252,8 +259,9 @@ class PickingActivity : AppCompatActivity() {
         binding.nextButton.isEnabled = !loading
     }
 
-    private fun showStatus(message: String, kind: Status = Status.NEUTRAL) {
+    private fun showStatus(message: String, kind: Status = Status.NEUTRAL, speak: Boolean = true) {
         binding.statusText.text = message
+        if (speak) speaker.speak(message)
         val (bg, fg) = when (kind) {
             Status.SUCCESS -> R.color.success to R.color.bg
             Status.ERROR -> R.color.danger to R.color.bg

@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val api = GlassApi()
+    private lateinit var speaker: Speaker
 
     /** 가장 최근 스캔된 바코드. 조회는 이 값을 사용한다. */
     private var lastBarcode: String? = null
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        speaker = Speaker(this)   // resetToIdle() 의 showStatus 보다 먼저 준비
 
         binding.scanButton.setOnClickListener { startScan() }
         binding.inboundButton.setOnClickListener { queryLocation("입고") }
@@ -62,6 +64,11 @@ class MainActivity : AppCompatActivity() {
         binding.exitButton.setOnClickListener { finishAffinity() } // 음성 "종료" → 앱 종료
 
         resetToIdle()
+    }
+
+    override fun onDestroy() {
+        speaker.shutdown()
+        super.onDestroy()
     }
 
     /** "바코드 스캔" — 내장 스캐너 호출. */
@@ -98,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         binding.locationText.text = ""
         binding.hintText.text = ""
         binding.warehouseMap.setLocation(null)
-        showStatus("입고 위치 조회 중… ($mode)", Status.NEUTRAL)
+        showStatus("입고 위치 조회 중… ($mode)", Status.NEUTRAL, speak = false)
 
         lifecycleScope.launch {
             val result = api.queryInboundLocation(barcode, mode)
@@ -132,7 +139,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         setLoading(true)
-        showStatus("입고 확정 중…", Status.NEUTRAL)
+        showStatus("입고 확정 중…", Status.NEUTRAL, speak = false)
         lifecycleScope.launch {
             val res = api.confirmInbound(barcode)
             setLoading(false)
@@ -172,8 +179,9 @@ class MainActivity : AppCompatActivity() {
         binding.inboundConfirmButton.isEnabled = !loading && locationShown
     }
 
-    private fun showStatus(message: String, kind: Status = Status.NEUTRAL) {
+    private fun showStatus(message: String, kind: Status = Status.NEUTRAL, speak: Boolean = true) {
         binding.statusText.text = message
+        if (speak) speaker.speak(message)
         val (bg, fg) = when (kind) {
             Status.SUCCESS -> R.color.success to R.color.bg
             Status.ERROR -> R.color.danger to R.color.bg

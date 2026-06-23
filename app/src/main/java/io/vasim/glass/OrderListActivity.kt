@@ -26,6 +26,7 @@ class OrderListActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOrderListBinding
     private val api = GlassApi()
+    private lateinit var speaker: Speaker
 
     private var orders: List<GlassOrder> = emptyList()
     private val rows = mutableListOf<View>()
@@ -35,6 +36,7 @@ class OrderListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOrderListBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        speaker = Speaker(this)   // onResume → load() 의 showStatus 보다 먼저 준비
 
         binding.cancelButton.setOnClickListener { finish() }                 // "취소"
         binding.refreshButton.setOnClickListener { load() }                  // "새로고침"
@@ -51,8 +53,13 @@ class OrderListActivity : AppCompatActivity() {
         load()
     }
 
+    override fun onDestroy() {
+        speaker.shutdown()
+        super.onDestroy()
+    }
+
     private fun load() {
-        showStatus("불러오는 중…", Status.NEUTRAL)
+        showStatus("불러오는 중…", Status.NEUTRAL, speak = false)
         lifecycleScope.launch {
             val result = api.queryOrders()
             if (result == null) {
@@ -125,8 +132,9 @@ class OrderListActivity : AppCompatActivity() {
         }
     }
 
-    private fun showStatus(message: String, kind: Status) {
+    private fun showStatus(message: String, kind: Status, speak: Boolean = true) {
         binding.statusText.text = message
+        if (speak) speaker.speak(message)
         val (bg, fg) = when (kind) {
             Status.ERROR -> R.color.danger to R.color.bg
             Status.NEUTRAL -> R.color.surface_variant to R.color.fg
