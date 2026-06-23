@@ -89,10 +89,27 @@ class OrderListActivity : AppCompatActivity() {
 
         list.forEachIndexed { i, o ->
             val row = layoutInflater.inflate(R.layout.item_order, binding.listContainer, false)
-            val customer = o.customerName?.takeIf { it.isNotBlank() }?.let { "  $it" } ?: ""
-            val suffix = if (o.status == "Picking") "  [피킹중]" else ""
-            row.findViewById<TextView>(R.id.detailText).text =
-                "${o.orderNo}$customer  ·  ${o.lineCount}건$suffix"
+            row.findViewById<TextView>(R.id.badgeText).text = (i + 1).toString()
+            row.findViewById<TextView>(R.id.orderText).text = o.orderNo
+
+            // 서브라인: 거래처 · N건 · 목적지 (값 있는 것만)
+            val sub = buildList {
+                o.customerName?.takeIf { it.isNotBlank() }?.let { add(it) }
+                add("${o.lineCount}건")
+                o.destination?.takeIf { it.isNotBlank() }?.let { add(it) }
+            }.joinToString("  ·  ")
+            row.findViewById<TextView>(R.id.subText).text = sub
+
+            // 상태 태그(피킹중)만 표시. 콜드체인/FEFO 는 서버 데이터 추가 시 coldTag 로 노출.
+            row.findViewById<TextView>(R.id.statusTag).apply {
+                if (o.status == "Picking") {
+                    text = "피킹중"
+                    visibility = View.VISIBLE
+                } else {
+                    visibility = View.GONE
+                }
+            }
+
             row.setOnClickListener { open(o) }   // 탭 + WearHF "항목 N 열기"
             binding.listContainer.addView(row)
             rows.add(row)
@@ -122,9 +139,17 @@ class OrderListActivity : AppCompatActivity() {
 
     private fun highlight() {
         rows.forEachIndexed { i, row ->
-            row.setBackgroundResource(
-                if (i == cursor) R.drawable.bg_chip_selected else R.drawable.bg_chip
-            )
+            val sel = i == cursor
+            row.setBackgroundResource(if (sel) R.drawable.bg_row_selected else R.drawable.bg_row)
+            row.findViewById<TextView>(R.id.badgeText).apply {
+                setBackgroundResource(if (sel) R.drawable.bg_badge_selected else R.drawable.bg_badge)
+                setTextColor(
+                    ContextCompat.getColor(
+                        this@OrderListActivity,
+                        if (sel) R.color.primary else R.color.badge_fg
+                    )
+                )
+            }
         }
         // 커서 행을 화면에 보이게 스크롤
         rows.getOrNull(cursor)?.let { row ->

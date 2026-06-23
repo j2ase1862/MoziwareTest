@@ -1,22 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 다크 산업용 팔레트 (단안 글라스 고대비) -->
-    <color name="bg">#0A0C10</color>             <!-- 화면 배경 -->
-    <color name="surface">#161B24</color>        <!-- 카드 -->
-    <color name="surface_variant">#212834</color><!-- 보조 버튼 / 칩 -->
-    <color name="divider">#2A323F</color>
+    <!-- cımō 다크 · teal 고대비 팔레트 (design_handoff_cimo_warehouse 토큰 반영) -->
+    <color name="bg">#07100E</color>             <!-- 화면 배경 -->
+    <color name="surface">#0E1A17</color>        <!-- 카드/패널 -->
+    <color name="surface_variant">#15211E</color><!-- 보조 버튼 / 칩 / 바 -->
+    <color name="divider">#1E2D29</color>        <!-- 카드 보더 / 구분선 -->
 
-    <color name="fg">#F4F6FA</color>             <!-- 본문 -->
-    <color name="muted">#9AA6B4</color>          <!-- 보조 텍스트/라벨 -->
+    <color name="fg">#EAF3F0</color>             <!-- 본문(강) -->
+    <color name="muted">#8FA39D</color>          <!-- 보조 텍스트/라벨 -->
 
-    <color name="primary">#3B82F6</color>        <!-- 주 동작 -->
-    <color name="on_primary">#FFFFFF</color>
-    <color name="accent">#FFD166</color>         <!-- 위치 강조(고대비 앰버) -->
-    <color name="success">#34D399</color>
+    <color name="primary">#43E3C8</color>        <!-- 주 동작 (teal accent) -->
+    <color name="on_primary">#07100E</color>     <!-- teal 위 글자(다크) -->
+    <color name="accent">#43E3C8</color>         <!-- 위치/카운트 강조 (teal) -->
+    <color name="success">#34D399</color>        <!-- 확정 등 성공 동작 -->
     <color name="on_success">#08130D</color>
-    <color name="danger">#F87171</color>
+    <color name="danger">#FF8B80</color>         <!-- 경고/FEFO 텍스트 -->
+
+    <!-- 명령 pill / 번호 배지 보더 -->
+    <color name="pill_border">#2F6F63</color>    <!-- teal 명령 pill 보더 -->
+    <color name="badge_border">#3A4D48</color>   <!-- 번호 배지 보더(기본) -->
+    <color name="badge_fg">#AEBBB6</color>       <!-- 번호 배지 글자(기본) -->
+
+    <!-- danger 카드(FEFO/임박) -->
+    <color name="danger_bg">#241210</color>
+    <color name="danger_border">#6A2C24</color>
+    <color name="danger_pill_border">#7A3B33</color>
+
+    <!-- 진행중/선택 강조 -->
+    <color name="selected_bg">#10211D</color>
+    <color name="selected_border">#1F5249</color>
+
+    <!-- 콜드체인 태그 (텍스트 / 배경) -->
+    <color name="tag_frozen_fg">#79B8FF</color>  <!-- 냉동 -->
+    <color name="tag_frozen_bg">#0D2742</color>
+    <color name="tag_chilled_fg">#5FE0F5</color> <!-- 냉장 -->
+    <color name="tag_chilled_bg">#0A323D</color>
+    <color name="tag_ambient_fg">#FFCF8A</color> <!-- 상온 -->
+    <color name="tag_ambient_bg">#3A2A12</color>
+    <color name="tag_fefo_fg">#FF8B80</color>    <!-- FEFO -->
+    <color name="tag_fefo_bg">#4A1C17</color>
 
     <!-- 레거시 별칭 -->
-    <color name="button">#3B82F6</color>
-    <color name="button_text">#FFFFFF</color>
+    <color name="button">#43E3C8</color>
+    <color name="button_text">#07100E</color>
 </resources>

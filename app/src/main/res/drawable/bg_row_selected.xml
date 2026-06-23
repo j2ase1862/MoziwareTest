@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 출고 목록 행(커서/진행중 강조) — teal 보더 + 강조 배경. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/selected_bg" />
+    <corners android:radius="12dp" />
+    <stroke android:width="2dp" android:color="@color/selected_border" />
+</shape>

@@ -1,30 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  출고 목록 한 줄. 행 전체가 클릭 대상 → WearHF가 "항목 N 열기"로 번호 부여(+탭).
-  상세 텍스트는 접근성에서 숨겨(importantForAccessibility=no) 긴 텍스트가 명령으로
-  잡히지 않게 함. 커서 강조는 코드에서 배경 교체.
+  출고 목록 한 줄 (cımō 디자인 핸드오프 반영).
+  [번호 배지] · 주문번호(mono) + 콜드체인/상태 태그 / 거래처 · N건 · 목적지
+  행 전체가 클릭 대상 → WearHF "항목 N 열기"(배지 번호) + 탭. 커서 강조는 코드에서 배경 교체.
+  상세 텍스트는 a11y에서 숨겨(importantForAccessibility=no) 긴 텍스트가 음성 명령으로 안 잡히게 함.
+  coldTag/statusTag 는 데이터 있을 때만 코드에서 표시(기본 GONE).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/orderRow"
     android:layout_width="match_parent"
-    android:layout_height="58dp"
-    android:layout_marginBottom="8dp"
-    android:background="@drawable/bg_chip"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_row"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center_vertical"
+    android:minHeight="62dp"
     android:orientation="horizontal"
-    android:paddingStart="18dp"
-    android:paddingEnd="16dp">
+    android:paddingStart="14dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="10dp">
 
+    <!-- 번호 배지 (= 음성 "항목 N") -->
     <TextView
-        android:id="@+id/detailText"
+        android:id="@+id/badgeText"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:background="@drawable/bg_badge"
+        android:fontFamily="monospace"
+        android:gravity="center"
+        android:importantForAccessibility="no"
+        android:text="1"
+        android:textColor="@color/badge_fg"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- 본문 (2행) -->
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
         android:layout_weight="1"
-        android:ellipsize="end"
-        android:importantForAccessibility="no"
-        android:maxLines="1"
-        android:textColor="@color/fg"
-        android:textSize="18sp" />
+        android:orientation="vertical">
+
+        <!-- 1행: 주문번호 + 태그 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/orderText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:importantForAccessibility="no"
+                android:text="—"
+                android:textColor="@color/fg"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- 콜드체인 태그 (데이터 있을 때만 표시) -->
+            <TextView
+                android:id="@+id/coldTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="9dp"
+                android:background="@drawable/bg_tag"
+                android:importantForAccessibility="no"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:text=""
+                android:textSize="12sp"
+                android:visibility="gone" />
+
+            <!-- 상태 태그 (피킹중 등) -->
+            <TextView
+                android:id="@+id/statusTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="9dp"
+                android:importantForAccessibility="no"
+                android:text=""
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- 2행: 거래처 · N건 · 목적지 -->
+        <TextView
+            android:id="@+id/subText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:ellipsize="end"
+            android:importantForAccessibility="no"
+            android:maxLines="1"
+            android:text=""
+            android:textColor="@color/muted"
+            android:textSize="13.5sp" />
+    </LinearLayout>
+
 </LinearLayout>
